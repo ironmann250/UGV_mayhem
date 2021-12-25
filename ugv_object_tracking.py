@@ -217,6 +217,7 @@ now=time.time()
 fbcount=0
 fbsum=0
 ffb=1
+
 while True:
     if testTime !=0 and (time.time()-now >=testTime):
         if not debug:
