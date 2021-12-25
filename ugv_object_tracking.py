@@ -59,17 +59,17 @@ def grab(ep_robot, radius, center, inches):
     ep_arm = ep_robot.robotic_arm
     ep_gripper = ep_robot.gripper
 
-    real_height = calculateHeightAndBeta(radius, center, inches)
+    real_height = calculateHeightAndBeta(radius, center, inches)-3
     print("real_height:", real_height)
 
     ep_gripper.open()
     time.sleep(3)
-    ep_arm.moveto(x=180, y=real_height).wait_for_completed()
+    ep_arm.moveto(x=150, y=real_height).wait_for_completed()
     ep_chassis.drive_speed(x=0.1, y=0, z=0, timeout=1)
-    time.sleep(0.5)
+    time.sleep(0.2)
     ep_gripper.close()
     time.sleep(3)
-    ep_arm.moveto(x=70, y=40).wait_for_completed()
+    
 
 
 def distance_to_camera(knownWidth, focalLength, perWidth):
@@ -189,25 +189,17 @@ def trackObj(me, info, w,h, pidSpeed, pErrorSpeed,pidUd, pErrorUd):
     
     if area > fbRange[0] and area < fbRange[1]:
         fb = 0
-
     if area > fbRange[1]:
         fb = -0.1
     elif area < fbRange[0] and area > 0:
         fb = 0.1
     
-    
     if x == 0:
-        timeWaited=time.time()-change
-        if True:#timeWaited>waitTime:
-            timeWaited=0
-            speed = 0
-            fb=0
-            ud=0
-            errorUd = 0
-            errorSpeed = 0
-    else:
-        change=time.time()
-        timeWaited=0
+        speed = 0
+        fb=0
+        ud=0
+        errorUd = 0
+        errorSpeed = 0
 
     #print(speed, fb)
     cv2.putText(imgContour, "LR: "+str(speed)+" FB: "+str(fb)+" UD: "+str(-ud),( 5, 200), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1.2,(0, 0, 255), 2)
@@ -277,8 +269,9 @@ while True:
         focalLength = (2 * 14.3 * KNOWN_DISTANCE) / KNOWN_WIDTH
         dist = distance_to_camera(KNOWN_WIDTH, focalLength, 2 * radius)
         grab(ep_robot, radius, center, dist)
-        ep_chassis.drive_speed(x=-0.1, y=0, z=0, timeout=1)
+        ep_chassis.drive_speed(x=-0.5, y=0, z=0, timeout=1)
         time.sleep(3)
+        ep_robot.robotic_arm.moveto(x=70, y=40).wait_for_completed()
         ep_robot.gripper.open()
         time.sleep(2)
         ep_chassis.drive_speed(x=-0.1, y=0, z=0, timeout=1)
